@@ -1,6 +1,12 @@
+import '../styles/CreateTodoButton.css';
+
 function CreateTodoButton(){
     return (
-        <button>+</button>
+        <div className="containerButton">   
+            <button>
+            <span class="material-symbols-outlined">add</span>
+            </button>
+        </div>
     );
 }
 

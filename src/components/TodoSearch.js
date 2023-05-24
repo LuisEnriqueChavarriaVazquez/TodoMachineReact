@@ -1,6 +1,10 @@
+import '../styles/TodoSearch.css'
+
 function TodoSearch(){
     return (
-        <input placeholder="Texto de ejemplo"></input>
+        <div className='containerSearch'>
+            <input placeholder="Escriba el ToDo a buscar..." type='text'></input>
+        </div>
     );
 }
 
