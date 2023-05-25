@@ -46,6 +46,7 @@
 .listContainer ul li span:last-child:hover,
 .listContainer ul li span:first-child:hover{
     background-color: #d4d4d4;
+    cursor: pointer;
 }
 
 .listContainer ul li p{
