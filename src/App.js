@@ -8,27 +8,12 @@ import { TodoList } from './components/TodoList';
 import { CreateTodoButton } from './components/CreateTodoButton';
 import { TodoItem } from './components/TodoItem';
 
-const defaultTodos = [
-  { id: 1, text: 'ToDo número 1', completed: false},
-  { id: 2, text: 'ToDo número 2', completed: true},
-  { id: 3, text: 'ToDo número 3', completed: false},
-  { id: 4, text: 'ToDo número 4', completed: false},
-  { id: 5, text: 'ToDo número 5', completed: true},
-  { id: 6, text: 'ToDo número 6', completed: false},
-  { id: 7, text: 'ToDo número 7', completed: false},
-  { id: 8, text: 'ToDo número 8', completed: true},
-  { id: 9, text: 'ToDo número 9', completed: false},
-  { id: 0, text: 'ToDo número 10', completed: false},
-  { id: 10, text: 'KAKA', completed: false},
-  { id: 11, text: 'kaka', completed: false},
-  
-];
 
 function App() {
   
   //App es el componente padre, por eso definimos aquí los estados.
   const [searchedState, setSearchedState] = React.useState(''); //Estado para leer contenido del buscador
-  const [todo, setTodo] = React.useState(defaultTodos); //Estado para recibir los todos/actividades actuales
+  const [todo, setTodo] = React.useState(convertStoredTodos()); //Estado para recibir los todos/actividades actuales
 
   //Filtamos los todos completados
   const todosCompletados = todo.filter((e) => {
@@ -48,20 +33,57 @@ function App() {
 
   //Completamos una actividad
   function completeTodo(id_todo){
+    //Hacemos una copia del estado actual de las actividades
     let newTodos = [...todo];
-    let gottenTodo = todo.find((e) => {
+
+    //Buscamos al elemento por su ID
+    let gottenTodo = newTodos.find((e) => {
       if(e.id == id_todo){
         return e;
       }
     });
-    console.log('gottenTodo: ', gottenTodo);
 
-    gottenTodo.completed = true;
-    setTodo(newTodos)
+    //Si el elemento esta en true entonces lo hacemos false y viceversa
+    if(gottenTodo.completed == true){
+      gottenTodo.completed = false;
+    }else{
+      gottenTodo.completed = true;
+    }
+
+    //Guardamos en memoria los todos
+    storeTodos(newTodos);
+    //Actualizamos el estado
+    setTodo(newTodos);
   }
 
-  function deleteTodo(){
-    
+  //Borramos una actividad
+  function deleteTodo(id_todo){
+    //Borramos el elemento filtrandolo por el id
+    let filteredTodo = todo.filter((e) => {
+      if(e.id != id_todo){
+        return e;
+      }
+    });
+
+    //Guardamos en memoria los todos
+    storeTodos(filteredTodo);
+    //Actualizamos el estado
+    setTodo(filteredTodo);
+  }
+
+  //Alamacenamos en memoria nuestros todos
+  function storeTodos(todoArray){
+    localStorage.setItem('todos_storaged', JSON.stringify(todoArray));
+    return convertStoredTodos();
+  }
+
+  function convertStoredTodos(){
+    if(localStorage.getItem('todos_storaged') === null){
+      console.log('No hay elementos en memoria.')
+      localStorage.setItem('todos_storaged', JSON.stringify([{ id: 1, text: 'Actividad de ejemplo', completed: false},]));
+    }
+
+    return JSON.parse(localStorage.getItem('todos_storaged'));
   }
 
   return (
@@ -88,13 +110,9 @@ function App() {
               text={todo.text}
               completed={todo.completed}
               //Para completar las tareas
-              onComplete={() => {
-                completeTodo(todo.id);
-              }}
+              onComplete={() => {completeTodo(todo.id);}}
               //Para borrar las tareas
-              onDelete={() => {
-                deleteTodo(todo.id);
-              }}
+              onDelete={() => {deleteTodo(todo.id);}}
               />
               ))}
           </TodoList>
